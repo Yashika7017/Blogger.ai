@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
 import { Container, PostCard } from '../components'
+import React, {useState, useEffect} from 'react'
 import appwriteService from "../appwrite/config";
 
 function AllPosts() {
@@ -7,24 +7,31 @@ function AllPosts() {
     useEffect(() => {
         appwriteService.getPosts([]).then((posts) => {
             if (posts) {
-                setPosts(posts.documents)
+                // Filter out test posts
+                const filteredPosts = posts.documents.filter(post => 
+                    !post.Title.includes("Blogger.ai Test") && 
+                    !post.Title.includes("Check AI responce") &&
+                    !post.Title.includes("Check AI response")
+                );
+                setPosts(filteredPosts)
             }
         })
     }, [])
   return (
-    <div className='w-full py-8'>
-        <Container>
-            <div className='flex flex-wrap gap-6 justify-center'>
-                {/* {posts.map((post) => (
-                    <div key={post.$id} className='p-2 w-1/4'>
-                        <PostCard {...post} />
-                    </div>
-                ))} */}
-
-                {posts.map((post) => (
-                <PostCard key={post.$id} {...post} />))}
-            </div>
-            </Container>
+    <div className='w-full py-8 min-h-screen px-2 sm:px-4 md:px-6 lg:px-8'>
+        {/* Mobile: Vertical Layout */}
+        <div className='flex flex-col space-y-4 sm:hidden'>
+            {posts.map((post) => (
+                <PostCard key={post.$id} {...post} content={post.Contant} />
+            ))}
+        </div>
+        
+        {/* Desktop: Grid Layout */}
+        <div className='hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+            {posts.map((post) => (
+                <PostCard key={post.$id} {...post} content={post.Contant} />
+            ))}
+        </div>
     </div>
   )
 }

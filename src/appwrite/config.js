@@ -137,6 +137,53 @@ export class Service{
             return null;
         }
     }
+
+    async generateSummary(content, title) {
+        try {
+            const prompt = `Please provide a concise 2-line summary of the following blog post. Focus on the main points and key takeaways. Format your response as exactly 2 lines:
+
+Blog Title: ${title}
+Blog Content: ${content}
+
+Summary:`;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${conf.geminiApiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.3,
+                        maxOutputTokens: 150,
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Summary AI Response:", data);
+
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                const generatedText = data.candidates[0].content.parts[0].text;
+                return generatedText.trim();
+            } else {
+                throw new Error('Invalid response format from API');
+            }
+
+        } catch (error) {
+            console.error('Error generating summary:', error);
+            return 'Failed to generate summary. Please try again.';
+        }
+    }
 }
 
 

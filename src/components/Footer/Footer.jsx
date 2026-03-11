@@ -14,7 +14,7 @@ function Footer() {
               <div className="mb-4 inline-flex items-center">
                 <Logo width="120px" />
               </div>
-              <div>
+              <div className="text-center">
                 <p className="text-sm text-slate-400">
                   &copy; Copyright 2026. All Rights Reserved by Yashika Varshney.
                 </p>
@@ -53,12 +53,12 @@ function Footer() {
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/help">
                   Help
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/contact">
                   Contact Us
                 </Link>
               </li>

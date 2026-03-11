@@ -34,36 +34,44 @@ export default function Post() {
     };
 
     return post ? (
-        <div className="py-8">
+        <div className="w-full py-8 min-h-screen">
             <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={appwriteService.getFileView(post.featuredImage)}
-                        alt={post.Title}
-                        className="rounded-xl"
-                    />
-
-                    {isAuthor && (
-                        <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
-                                    Edit
+                <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:px-8">
+                    {/* Image Section */}
+                    <div className="w-full max-w-4xl mb-6 relative">
+                        <img
+                            src={appwriteService.getFileView(post.featuredImage)}
+                            alt={post.Title}
+                            className="w-full rounded-xl shadow-lg"
+                        />
+                        {isAuthor && (
+                            <div className="absolute right-6 top-6">
+                                <Link to={`/edit-post/${post.$id}`}>
+                                    <Button bgColor="bg-green-500" className="mr-3">
+                                        Edit
+                                    </Button>
+                                </Link>
+                                <Button bgColor="bg-red-500" onClick={deletePost}>
+                                    Delete
                                 </Button>
-                            </Link>
-                            <Button bgColor="bg-red-500" onClick={deletePost}>
-                                Delete
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.Title}</h1>
-                </div>
-                <div className="browser-css">
-                     {post?.Contant?
-                      parse(String(post.Contant)):
-                      "Loading contant..."}
+                            </div>
+                        )}
                     </div>
+                    
+                    {/* Title Section */}
+                    <div className="w-full max-w-4xl mb-8">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 text-center">{post.Title}</h1>
+                    </div>
+                    
+                    {/* Content Section */}
+                    <div className="w-full max-w-4xl">
+                        <div className="post-content">
+                            {post?.Contant ? 
+                                parse(String(post.Contant))
+                            : "Loading content..."}
+                        </div>
+                    </div>
+                </div>
             </Container>
         </div>
     ) : null;
