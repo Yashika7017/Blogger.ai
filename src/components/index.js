@@ -8,7 +8,7 @@ import Container from "./container/container"
 
 import Logo from "./container/Logo";
 
-import LogoutBtn from "./Header/Logoutbtn";
+import LogoutBtn from "./Header/LogoutBtn";
 
 import RTE from "./RTE"
 
