@@ -280,8 +280,8 @@ Please return the data in this JSON structure:
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-            <div className="w-2/3 px-2">
+        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap px-4">
+            <div className="w-full lg:w-2/3 lg:pr-4">
                 <div className="flex gap-2 mb-4">
                     <Input
                         label="Title :"
@@ -318,7 +318,7 @@ Please return the data in this JSON structure:
                 />
                 <RTE label="Contant :" name="Contant" control={control} defaultValue={getValues("Contant")} />
             </div>
-            <div className="w-1/3 px-2">
+            <div className="w-full lg:w-1/3 lg:pl-4 mt-6 lg:mt-0">
                 <Input
                     label="Featured Image :"
                     type="file"
