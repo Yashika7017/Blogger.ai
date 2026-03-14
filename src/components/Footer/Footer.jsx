@@ -29,13 +29,18 @@ function Footer() {
             </h3>
             <ul>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/about">
+                  About Us
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/features">
                   Features
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
-                  Pricing
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/roadmap">
+                  Roadmap
                 </Link>
               </li>
             </ul>
@@ -72,12 +77,12 @@ function Footer() {
             </h3>
             <ul>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/terms">
                   Terms & Conditions
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/">
+                <Link className="text-base font-medium text-slate-200 hover:text-white transition-all duration-200" to="/privacy">
                   Privacy Policy
                 </Link>
               </li>

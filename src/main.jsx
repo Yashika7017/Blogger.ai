@@ -19,6 +19,11 @@ import Post from "./pages/Post";
 import AllPosts from "./pages/AllPosts";
 import Contact from "./pages/Contact";
 import Help from "./pages/Help";
+import Features from "./pages/Features";
+import Roadmap from "./pages/Roadmap";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import About from "./pages/About";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +88,26 @@ const router = createBrowserRouter([
         {
             path: "/help",
             element: <Help />,
+        },
+        {
+            path: "/features",
+            element: <Features />,
+        },
+        {
+            path: "/roadmap",
+            element: <Roadmap />,
+        },
+        {
+            path: "/terms",
+            element: <Terms />,
+        },
+        {
+            path: "/privacy",
+            element: <Privacy />,
+        },
+        {
+            path: "/about",
+            element: <About />,
         },
     ],
 },

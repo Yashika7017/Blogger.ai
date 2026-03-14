@@ -86,63 +86,67 @@ function Help() {
           </p>
 
           {/* Search Bar */}
-          <div className='mb-8'>
-            <div className='relative max-w-2xl mx-auto'>
-              <input
-                type='text'
-                placeholder='Search for help topics...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full px-12 py-4 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-              />
-              <svg
-                className='absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                />
-              </svg>
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className='absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors'
-                >
-                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M6 18L18 6M6 6l12 12' />
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
+          {/* Search Bar Container */}
+<div className='mb-8 px-4'>
+  <div className='relative max-w-2xl mx-auto'>
+    
+    {/* Search Icon - Forced to stay on left */}
+    <div 
+    style={{ 
+      position: 'absolute', 
+      left: '16px', 
+      top: '50%', 
+      transform: 'translateY(-50%)', 
+      zIndex: 10,
+      display: 'flex',
+      alignItems: 'center'
+    }}
+  >
+      <svg
+        className='w-5 h-5 text-slate-400'
+        fill='none'
+        stroke='currentColor'
+        viewBox='0 0 24 24'
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+
+    {/* Input Field - Using forced padding classes */}
+    <input
+      type='text'
+      placeholder='Search for questions, keywords...'
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      // !pl-14 ensures it overrides ANY other padding rule
+      className='block w-full !pl-14 pr-4 py-4 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder:text-slate-400 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200'
+      style={{ paddingLeft: '3.5rem' }} // Double confirmation
+    />
+  </div>
+</div>
 
           {/* FAQ Accordion */}
-          <div className='space-y-4 mb-12'>
+          <div className='space-y-4 mb-12 md:space-y-4'>
             {filteredFAQ.length > 0 ? (
               filteredFAQ.map((item) => (
                 <div
                   key={item.id}
-                  className='bg-slate-700 border border-slate-600 rounded-xl overflow-hidden transition-all duration-200'
+                  className='bg-slate-700 border border-slate-600 rounded-xl overflow-hidden transition-all duration-200 w-[92%] mx-auto md:w-full md:mx-0'
                 >
                   <button
                     onClick={() => toggleAccordion(item.id)}
-                    className='w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-600 transition-colors'
+                    className='w-full px-4 py-3 md:px-6 md:py-4 text-left flex items-center justify-between hover:bg-slate-600 transition-colors'
                   >
-                    <div>
-                      <span className='text-xs text-blue-400 font-medium mb-1 block'>
+                    <div className='flex-1 text-left'>
+                      <span className='text-xs text-blue-400 font-medium mb-1 block uppercase tracking-wider'>
                         {item.category}
                       </span>
-                      <h3 className='text-white font-semibold'>
+                      <h3 className='text-white font-semibold text-sm md:text-base'>
                         {item.question}
                       </h3>
                     </div>
                     <svg
-                      className={`w-5 h-5 text-slate-400 transform transition-transform duration-200 ${
+                      className={`w-4 h-4 md:w-5 md:h-5 text-slate-400 transform transition-transform duration-300 flex-shrink-0 ml-3 ${
                         expandedItem === item.id ? 'rotate-180' : ''
                       }`}
                       fill='none'
@@ -153,9 +157,9 @@ function Help() {
                     </svg>
                   </button>
                   {expandedItem === item.id && (
-                    <div className='px-6 pb-4'>
-                      <div className='pt-4 border-t border-slate-600'>
-                        <p className='text-slate-300 leading-relaxed whitespace-pre-line'>
+                    <div className='px-4 pb-3 md:px-6 md:pb-4 animate-in slide-in-from-top duration-200'>
+                      <div className='pt-3 md:pt-4 border-t border-slate-600'>
+                        <p className='text-slate-300 text-sm leading-relaxed text-left'>
                           {item.answer}
                         </p>
                       </div>
@@ -164,9 +168,9 @@ function Help() {
                 </div>
               ))
             ) : (
-              <div className='text-center py-12'>
+              <div className='text-center py-12 w-[92%] mx-auto md:w-full md:mx-0'>
                 <svg
-                  className='w-16 h-16 text-slate-600 mx-auto mb-4'
+                  className='w-12 h-12 md:w-16 md:h-16 text-slate-600 mx-auto mb-4'
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -178,10 +182,10 @@ function Help() {
                     d='M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                   />
                 </svg>
-                <p className='text-slate-400 text-lg'>
+                <p className='text-slate-400 text-base md:text-lg mb-2'>
                   No results found for "{searchTerm}"
                 </p>
-                <p className='text-slate-500 mt-2'>
+                <p className='text-slate-500 text-sm'>
                   Try searching with different keywords
                 </p>
               </div>

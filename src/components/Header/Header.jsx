@@ -90,7 +90,7 @@ function Header() {
 
       <Container>
 
-        <nav className='flex items-center justify-between'>
+        <nav className='flex items-center justify-between '>
 
           <div className='mr-4 relative'>
 
@@ -138,7 +138,7 @@ function Header() {
 
           {/* Desktop Navigation */}
 
-          <ul className='hidden md:flex ml-auto'>
+          <ul className='hidden md:flex ml-auto '>
 
             {navItems.map((item) => 
 
@@ -150,7 +150,7 @@ function Header() {
 
                 onClick={() => navigate(item.slug)}
 
-                className='inline-block px-4 py-1 text-slate-200 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200 font-medium'
+                className='inline-block px-6 py-1 text-slate-200 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200 font-medium'
 
                 >{item.name}</button>
 
