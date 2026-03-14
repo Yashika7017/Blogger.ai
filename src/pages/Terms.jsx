@@ -1,5 +1,5 @@
 import React from 'react';
-import Container from '../components/container/Container';
+import Container from '../components/container/container';
 import { Link } from 'react-router-dom';
 
 export default function Terms() {
