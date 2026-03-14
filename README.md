@@ -1,16 +1,24 @@
-# React + Vite
+# 🤖 Blogger.ai - AI-Powered Blogging Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Blogger.ai is a professional full-stack application designed to simplify content creation. It uses **Google Gemini AI** to assist writers and **Appwrite** for a secure, scalable backend.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
+- **AI Integration:** Uses Gemini AI for smart content summaries.
+- **Full-Stack:** Built with React.js, Redux Toolkit, and Appwrite.
+- **Secure:** Environment variables protected and platform whitelisting enabled.
+- **Responsive:** Modern dark-theme UI with Tailwind CSS.
+- **Professional Pages:** Custom About Us, Roadmap, and Help Center.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tech Stack
+- **Frontend:** React.js
+- **State Management:** Redux Toolkit
+- **Backend-as-a-Service:** Appwrite
+- **AI Engine:** Google Gemini API
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
 
-## React Compiler
+## 👩‍💻 Architect
+**Yashika Varshney** *Final Year B.Tech CSE Student* *Vision Institute of Technology, Aligarh*
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+© 2026 Blogger.ai | Developed by Yashika Varshney.
