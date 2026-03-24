@@ -99,7 +99,7 @@ function PostCard({ $id, Title, featuredImage, content }) {
                             generateSummary();
                         }}
                         disabled={isSummarizing}
-                        className="px-2 py-1 sm:px-3 sm:py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] sm:text-xs rounded-md shrink-0"
+                        className="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs sm:text-sm rounded-lg shrink-0 min-h-[44px] touch-manipulation transition-all duration-200 hover:from-purple-700 hover:to-blue-700 active:scale-95"
                     >
                         {isSummarizing ? '...' : summary ? '✨ Regenerate' : '✨ Generate'}
                     </button>

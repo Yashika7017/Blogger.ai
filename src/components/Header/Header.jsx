@@ -86,13 +86,15 @@ function Header() {
 
   return (
 
-    <header className='py-1 shadow-md bg-[#0f172a] border-b border-slate-800 relative pb-12'>
+    <header className='py-3 shadow-md bg-[#0f172a] border-b border-slate-800 relative'>
 
       <Container>
 
         <nav className='flex items-center justify-between '>
 
-          <div className='mr-4 relative'>
+          {/* Logo */}
+
+          <div className='flex items-center'>
 
             <Link to='/'>
 
@@ -100,39 +102,41 @@ function Header() {
 
             </Link>
 
-            {/* Mobile Menu Button - Below Logo on Left */}
-
-            <button
-
-              onClick={toggleMenu}
-
-              className='md:hidden absolute -bottom-6 left-0 inline-flex items-center justify-center p-2 rounded-md text-slate-200 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'
-
-              aria-expanded="false"
-
-            >
-
-              <span className="sr-only">Open menu</span>
-
-              {/* Hamburger Icon */}
-
-              <svg className={`${isOpen ? 'hidden' : 'block'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-
-              </svg>
-
-              {/* Close Icon */}
-
-              <svg className={`${isOpen ? 'block' : 'hidden'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-
-              </svg>
-
-            </button>
-
           </div>
+
+          
+
+          {/* Mobile Menu Button - Top Right Corner */}
+
+          <button
+
+            onClick={toggleMenu}
+
+            className='md:hidden ml-auto inline-flex items-center justify-center p-3 rounded-md text-slate-200 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white min-h-[44px] touch-manipulation transition-all duration-200'
+
+            aria-expanded="false"
+
+          >
+
+            <span className="sr-only">Open menu</span>
+
+            {/* Hamburger Icon */}
+
+            <svg className={`${isOpen ? 'hidden' : 'block'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+
+            </svg>
+
+            {/* Close Icon */}
+
+            <svg className={`${isOpen ? 'block' : 'hidden'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+
+            </svg>
+
+          </button>
 
           
 
@@ -202,7 +206,7 @@ function Header() {
 
               }}
 
-              className='block w-full text-left px-3 py-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-md transition-all duration-200 font-medium text-left'
+              className='block w-full text-left px-4 py-3 text-slate-200 hover:text-white hover:bg-slate-700 rounded-md transition-all duration-200 font-medium text-left min-h-[44px] touch-manipulation'
 
             >
 

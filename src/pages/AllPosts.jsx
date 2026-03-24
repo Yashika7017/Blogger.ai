@@ -18,11 +18,13 @@ function AllPosts() {
         })
     }, [])
   return (
-    <div className='w-full py-8 min-h-screen px-2 sm:px-4 md:px-6 lg:px-8'>
-        {/* Mobile: Vertical Layout */}
-        <div className='flex flex-col space-y-4 sm:hidden'>
+    <div className='w-full py-8 min-h-screen px-4 sm:px-6 lg:px-8'>
+        {/* Mobile: Vertical Layout with proper padding */}
+        <div className='flex flex-col space-y-4 sm:hidden px-2'>
             {posts.map((post) => (
-                <PostCard key={post.$id} {...post} content={post.Contant} />
+                <div key={post.$id} className='w-full'>
+                    <PostCard {...post} content={post.Contant} />
+                </div>
             ))}
         </div>
         

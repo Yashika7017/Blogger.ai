@@ -31,15 +31,10 @@ function Home() {
     }
 
     return (
-        <div className='w-full py-8'>
+        <div className='w-full py-8 px-4 sm:px-6 lg:px-8'>
             <Container>
-                {/* 1. Added -mx-2 to prevent horizontal overflow on mobile */}
-                <div className='flex flex-wrap -mx-2'>
+                <div className='flex flex-wrap'>
                     {posts.map((post) => (
-                        /* 2. Responsive widths: 
-                           Mobile: 1 card (w-full)
-                           Tablet: 2 cards (sm:w-1/2)
-                           Laptop: 3-4 cards (md/lg) */
                         <div key={post.$id} className='p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4'>
                             <PostCard {...post} />
                         </div>
