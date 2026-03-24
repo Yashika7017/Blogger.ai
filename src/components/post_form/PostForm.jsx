@@ -19,6 +19,33 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
     const [isGenerating, setIsGenerating] = useState(false);
 
+    const generateFallbackContent = (title) => {
+        return `
+        <h2>Introduction to ${title}</h2>
+        <p>Welcome to this comprehensive guide about ${title}. In this article, we'll explore the key concepts, best practices, and practical applications that will help you understand and implement this topic effectively.</p>
+        
+        <h3>What is ${title}?</h3>
+        <p>${title} represents an important aspect of modern development and technology. It provides solutions to common challenges while offering innovative approaches to problem-solving.</p>
+        
+        <h3>Key Benefits</h3>
+        <ul>
+            <li>Improved efficiency and performance</li>
+            <li>Enhanced user experience</li>
+            <li>Scalable solutions for growing needs</li>
+            <li>Cost-effective implementation</li>
+        </ul>
+        
+        <h3>Best Practices</h3>
+        <p>When working with ${title}, it's essential to follow industry best practices to ensure optimal results. These include proper planning, regular testing, and continuous improvement.</p>
+        
+        <h3>Common Challenges</h3>
+        <p>Like any technology, ${title} comes with its own set of challenges. Understanding these obstacles and knowing how to overcome them is crucial for success.</p>
+        
+        <h3>Conclusion</h3>
+        <p>${title} offers tremendous opportunities for developers and businesses alike. By following the guidelines and best practices outlined in this article, you'll be well-equipped to leverage its full potential.</p>
+        `;
+    };
+
     const generateContentWithAI = async () => {
         const title = getValues("Title");
         
@@ -29,8 +56,13 @@ export default function PostForm({ post }) {
 
         // Validate API key
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        if (!apiKey || apiKey.length < 10) {
-            alert("API key is missing or invalid. Please check your .env file and ensure VITE_GEMINI_API_KEY is set correctly.");
+        if (!apiKey) {
+            alert("API key is missing. Please add VITE_GEMINI_API_KEY to your .env file.");
+            return;
+        }
+        
+        if (apiKey.startsWith('VITE_') || apiKey.includes('${')) {
+            alert("API key is not properly configured. Please check your .env file and restart the development server.");
             return;
         }
 
@@ -78,7 +110,7 @@ Please return the data in this JSON structure:
                         temperature: 0.7,
                         topK: 40,
                         topP: 0.95,
-                        maxOutputTokens: 2048,
+                        maxOutputTokens: 8192,
                     }
                 })
             });
@@ -87,31 +119,23 @@ Please return the data in this JSON structure:
             console.log("API Response headers:", response.headers);
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("API Error Response:", errorText);
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             console.log("AI Response:", data);
-            console.log("Response structure:", JSON.stringify(data, null, 2));
-            
-            // Handle different response structures
-            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
-                const candidate = data.candidates[0];
-                const generatedText = candidate.content.parts?.[0]?.text?.trim() || candidate.content?.text?.trim() || '';
-                console.log("Generated content:", generatedText);
-                console.log("Content length:", generatedText.length);
+
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                const generatedText = data.candidates[0].content.parts[0].text;
                 
                 // Try to parse JSON response
                 let parsedContent;
                 try {
-                    // Look for JSON in the response
-                    const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-                    if (jsonMatch && jsonMatch[0]) {
-                        parsedContent = JSON.parse(jsonMatch[0]);
-                        console.log("Successfully parsed JSON:", parsedContent);
-                    } else {
+                    parsedContent = JSON.parse(generatedText);
+                    setValue("Contant", parsedContent.content);
+                    setValue("slug", parsedContent.slug);
+                    if (parsedContent.title) {
+                        setValue("Title", parsedContent.title);
                         console.log("No JSON found, using plain text fallback");
                         // Fallback: treat as plain text content
                         parsedContent = {
@@ -162,60 +186,6 @@ Please return the data in this JSON structure:
         }
     };
 
-    const generateFallbackContent = (title) => {
-        const slug = title.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/\s+/g, '-')
-            .slice(0, 35);
-
-        const content = `<h2>Understanding ${title}: A Comprehensive Guide</h2>
-<p>Welcome to our in-depth exploration of ${title}. In today's rapidly evolving digital landscape, understanding this concept has become essential for professionals and enthusiasts alike. This comprehensive guide will walk you through everything you need to know, from fundamental principles to advanced applications.</p>
-
-<h3>What Makes ${title} So Important?</h3>
-<p>${title} represents a significant breakthrough in how we approach modern challenges. Its unique combination of innovative features and practical applications makes it an invaluable tool for anyone looking to stay ahead in their field. Whether you're a beginner or an experienced professional, mastering ${title} can open doors to new opportunities and insights.</p>
-
-<h3>Key Benefits and Advantages</h3>
-<ul>
-<li><strong>Enhanced Efficiency:</strong> Streamlines processes and reduces time complexity by up to 60%</li>
-<li><strong>Cost-Effective Solutions:</strong> Minimizes resource requirements while maximizing output quality</li>
-<li><strong>Scalable Architecture:</strong> Adapts seamlessly to growing demands and changing requirements</li>
-<li><strong>User-Friendly Interface:</strong> Intuitive design ensures smooth adoption and minimal learning curve</li>
-<li><strong>Future-Proof Technology:</strong> Built with scalability and long-term sustainability in mind</li>
-</ul>
-
-<h3>Getting Started: A Step-by-Step Approach</h3>
-<p>Embarking on your ${title} journey doesn't have to be overwhelming. We recommend starting with the fundamentals and gradually building your expertise. Begin by understanding the core concepts, then move on to practical implementation. Remember, mastery comes through consistent practice and continuous learning.</p>
-
-<h3>Best Practices for Success</h3>
-<p>To achieve optimal results with ${title}, it's crucial to follow established best practices. These include proper planning, regular performance monitoring, and staying updated with the latest developments. Additionally, building a strong foundation of knowledge and seeking guidance from experienced practitioners can significantly accelerate your learning curve.</p>
-
-<h3>Common Challenges and Solutions</h3>
-<p>Like any powerful tool, ${title} comes with its own set of challenges. The most common issues include integration complexities, performance optimization, and maintaining consistency across different use cases. Fortunately, each challenge has proven solutions that we'll explore in detail, ensuring you're well-equipped to handle any situation that arises.</p>
-
-<h3>Advanced Techniques and Strategies</h3>
-<p>Once you've mastered the basics, it's time to explore advanced techniques that can take your ${title} implementation to the next level. These include optimization strategies, customization options, and integration with complementary technologies. Advanced users can also explore automation possibilities and develop custom workflows tailored to their specific needs.</p>
-
-<h3>Real-World Applications and Case Studies</h3>
-<p>The true power of ${title} becomes evident when we examine its real-world applications. From small startups to large enterprises, organizations across various industries have leveraged this technology to achieve remarkable results. We'll analyze several case studies that demonstrate the transformative impact of proper implementation.</p>
-
-<h3>Future Trends and Developments</h3>
-<p>The field of ${title} is constantly evolving, with new innovations and improvements emerging regularly. Staying informed about upcoming trends and technological advancements will help you maintain a competitive edge. We'll discuss what the future holds and how you can prepare for upcoming changes and opportunities.</p>
-
-<h3>Conclusion: Your Path to Mastery</h3>
-<p>${title} offers tremendous potential for those willing to invest the time and effort to master it. By following the guidelines and strategies outlined in this comprehensive guide, you'll be well-equipped to leverage this powerful technology effectively. Remember that learning is a continuous journey, and staying curious and open to new ideas will serve you well.</p>
-
-<p>As you continue your exploration of ${title}, don't hesitate to experiment, ask questions, and seek out additional resources. The community of practitioners is always ready to help, and sharing knowledge benefits everyone involved. Your success with ${title} is limited only by your dedication and willingness to learn.</p>
-
-<p><strong>Ready to take the next step?</strong> Start implementing what you've learned today and join the thousands of professionals who have already transformed their work with ${title}. The journey of a thousand miles begins with a single step, and you've already taken the first one by reading this guide.</p>`;
-
-        return {
-            title: title,
-            slug: slug,
-            content: content,
-            status: "active"
-        };
-    };
-
     const submit = async (data) => {
         try {
             if (post) {
@@ -230,7 +200,7 @@ Please return the data in this JSON structure:
                     Contant: data.Contant,
                     featuredImage: file ? file.$id: undefined,
                     status: data.status,
-                    userId: userData.$id,
+                    userId: userData.$id
                 });
 
                 if (dbPost) navigate(`/post/${dbPost.$id}`);
@@ -246,7 +216,7 @@ Please return the data in this JSON structure:
                     Contant: data.Contant,
                     featuredImage: data.featuredImage,
                     status: data.status,
-                    userId: userData.$id 
+                    userId: userData.$id
                 });
                     if (dbPost) navigate(`/post/${dbPost.$id}`);
                 }
@@ -280,71 +250,100 @@ Please return the data in this JSON structure:
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap px-4">
-            <div className="w-full lg:w-2/3 lg:pr-4">
-                <div className="flex gap-2 mb-4">
-                    <Input
-                        label="Title :"
-                        placeholder="title"
-                        className="flex-1 bg-[#1e293b] text-slate-200 font-semibold border-slate-700 focus:border-indigo-500 rounded-xl"
-                        {...register("Title", { required: true })}
-                    />
+        <form onSubmit={handleSubmit(submit)} className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="w-full space-y-6 flex flex-col items-stretch">
+                {/* Title and AI Button Section */}
+                <div className="w-full flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1 w-full">
+                        <Input 
+                            label="Title :"
+                            placeholder="Enter your blog title"
+                            className="w-full bg-[#1e293b] text-slate-200 font-semibold border-slate-700 focus:border-indigo-500 rounded-xl text-sm sm:text-base"
+                            {...register("Title", { required: true })}
+                        />
+                    </div>
                     <Button
                         type="button"
                         onClick={generateContentWithAI}
                         disabled={isGenerating}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 h-fit self-end"
+                        className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 h-fit text-xs sm:text-sm whitespace-nowrap"
                     >
                         {isGenerating ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                Generating...
+                                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span className="hidden sm:inline">Generating...</span>
+                                <span className="sm:hidden">...</span>
                             </>
                         ) : (
                             <>
-                                ✨ Generate with AI
+                                <span className="hidden sm:inline">✨ Generate with AI</span>
+                                <span className="sm:hidden">✨ AI</span>
                             </>
                         )}
                     </Button>
                 </div>
-                <Input
-                    label="Slug :"
-                    placeholder="Slug"
-                    className="mb-4 bg-[#1e293b] text-slate-200 font-semibold border-slate-700 focus:border-indigo-500 rounded-xl"
-                    {...register("slug", { required: true })}
-                    onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                    }}
-                />
-                <RTE label="Contant :" name="Contant" control={control} defaultValue={getValues("Contant")} />
-            </div>
-            <div className="w-full lg:w-1/3 lg:pl-4 mt-6 lg:mt-0">
-                <Input
-                    label="Featured Image :"
-                    type="file"
-                    className="mb-4"
-                    accept="image/png, image/jpg, image/jpeg, image/gif"
-                    {...register("image", { required: !post })}
-                />
-                {post && (
-                    <div className="w-full mb-4">
-                        <img
-                            src={appwriteService.getFileView(post.featuredImage)}
-                            alt={post.Title}
-                            className="rounded-lg"
+
+                {/* Slug Field */}
+                <div>
+                    <Input
+                        label="Slug :"
+                        placeholder="url-friendly-slug"
+                        className="w-full bg-[#1e293b] text-slate-200 font-semibold border-slate-700 focus:border-indigo-500 rounded-xl text-sm sm:text-base"
+                        {...register("slug", { required: true })}
+                        onInput={(e) => {
+                            setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                        }}
+                    />
+                </div>
+
+                {/* Content Editor - Full Width */}
+                <div>
+                    <RTE label="Content :" name="Contant" control={control} defaultValue={getValues("Contant")} />
+                </div>
+
+                {/* Sidebar Section - Responsive Layout */}
+                <div className="flex flex-col lg:flex-row lg:gap-6 space-y-4 lg:space-y-0">
+                    {/* Featured Image - Takes more space on desktop */}
+                    <div className="flex-1 lg:flex-none lg:w-3/5">
+                        <Input
+                            label="Featured Image :"
+                            type="file"
+                            className="w-full"
+                            accept="image/png, image/jpg, image/jpeg, image/gif"
+                            {...register("image", { required: !post })}
                         />
+                        {post && (
+                            <div className="mt-3">
+                                <img
+                                    src={appwriteService.getFileView(post.featuredImage)}
+                                    alt={post.Title}
+                                    className="rounded-lg w-full h-auto max-h-32 sm:max-h-40 lg:max-h-48 object-cover"
+                                />
+                            </div>
+                        )}
                     </div>
-                )}
-                <Select
-                    options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
-                    {...register("status", { required: true })}
-                />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className={`w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/20 duration-300 ${post ? "bg-green-600 hover:bg-green-500 shadow-green-900/20": "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/30"} active:scale-95`}>
-                    
-                    {post ? "Update Blog" : "Publish Blog"}
-                </Button>
+
+                    {/* Status and Submit - Takes less space on desktop */}
+                    <div className="lg:w-2/5 space-y-4">
+                        <Select
+                            options={["active", "inactive"]}
+                            label="Status"
+                            className="w-full"
+                            {...register("status", { required: true })}
+                        />
+                        <Button 
+                            type="submit" 
+                            bgColor={post ? "bg-green-500" : undefined} 
+                            className={`w-full py-2 sm:py-3 text-sm sm:text-base font-bold rounded-xl transition-all shadow-lg duration-300 active:scale-95 ${
+                                post 
+                                    ? "bg-green-600 hover:bg-green-500 shadow-green-900/20" 
+                                    : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/30"
+                            }`}
+                        >
+                            {post ? "Update Blog" : "Publish Blog"}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </form>
     );

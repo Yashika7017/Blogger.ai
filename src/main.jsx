@@ -24,6 +24,8 @@ import Roadmap from "./pages/Roadmap";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import About from "./pages/About";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -108,6 +110,22 @@ const router = createBrowserRouter([
         {
             path: "/about",
             element: <About />,
+        },
+        {
+            path: "/forgot-password",
+            element: (
+                <AuthLayout authentication={false}>
+                    <ForgotPassword />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: "/reset-password",
+            element: (
+                <AuthLayout authentication={false}>
+                    <ResetPassword />
+                </AuthLayout>
+            ),
         },
     ],
 },

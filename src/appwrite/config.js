@@ -14,7 +14,7 @@ export class Service{
         this.bucket = new Storage(this.client);
     }
 
-    async createPost({Title, slug, Contant, featuredImage, status, userId}){
+    async createPost({Title, slug, Contant, featuredImage, status, userId, authorName}){
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
@@ -26,6 +26,7 @@ export class Service{
                     featuredImage,
                     status,
                     userId,
+                    authorName,
                 }
             )
         } catch (error) {
@@ -33,7 +34,7 @@ export class Service{
         }
     }
 
-    async updatePost(slug, {Title, Contant, featuredImage, status}){
+    async updatePost(slug, {Title, Contant, featuredImage, status, authorName}){
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -44,7 +45,7 @@ export class Service{
                     Contant,
                     featuredImage,
                     status,
-
+                    authorName,
                 }
             )
         } catch (error) {
@@ -182,6 +183,19 @@ Summary:`;
         } catch (error) {
             console.error('Error generating summary:', error);
             return 'Failed to generate summary. Please try again.';
+        }
+    }
+
+    // Method to get user by ID
+    async getUserById(userId) {
+        try {
+            // Note: This would require additional Appwrite setup to access user data
+            // For now, we'll return a placeholder
+            console.log('Getting user data for:', userId);
+            return { name: 'Unknown User' };
+        } catch (error) {
+            console.log("Appwrite service :: getUserById :: error", error);
+            return null;
         }
     }
 }

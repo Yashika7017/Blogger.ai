@@ -16,6 +16,10 @@ import Signup from "./Signup";
 
 import Login from "./Login";
 
+import ForgotPassword from "./ForgotPassword";
+
+import ResetPassword from "./ResetPassword";
+
 import PostForm from "./post_form/PostForm";
 
 import PostCard from "./PostCard"
@@ -51,6 +55,10 @@ export {
     Signup,
 
     Login,
+
+    ForgotPassword,
+
+    ResetPassword,
 
     PostForm,
 

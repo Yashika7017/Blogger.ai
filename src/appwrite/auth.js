@@ -55,6 +55,30 @@ export class AuthService {
             console.log("Appwrite serive :: logout :: error", error);
         }
     }
+
+    async forgotPassword(email) {
+        try {
+            await this.account.createRecovery(email, 'http://localhost:5173/reset-password');
+            return { success: true, message: 'Password reset email sent successfully' };
+        } catch (error) {
+            console.log("Appwrite service :: forgotPassword :: error", error);
+            throw error;
+        }
+    }
+
+    async updatePassword(userId, secret, password, confirmPassword) {
+        try {
+            if (password !== confirmPassword) {
+                throw new Error("Passwords do not match");
+            }
+            
+            await this.account.updateRecovery(userId, secret, password, confirmPassword);
+            return { success: true, message: 'Password updated successfully' };
+        } catch (error) {
+            console.log("Appwrite service :: updatePassword :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();
