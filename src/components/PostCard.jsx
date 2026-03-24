@@ -101,45 +101,44 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
             </h2>
         </Link>
         
-        {/* AI Summary Section */}
-        <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
-            <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
-                <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
-                
-                {/* Generate Summary Button - Always Visible */}
-                <button
-                    onClick={(e) => {
-                        e.preventDefault(); // Link click prevent karne ke liye
-                        generateSummary();
-                    }}
-                    disabled={isSummarizing}
-                    className="px-2 py-1 sm:px-3 sm:py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] sm:text-xs rounded-md shrink-0"
-                >
-                    {isSummarizing ? '...' : summary ? '✨ Regenerate' : '✨ Generate'}
-                </button>
-            </div>
+       {/* AI Summary Section */}
+{content && (
+    <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
+        <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
+            <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
             
-            {summary && !showFullContent && (
-                <div className="text-[11px] sm:text-sm text-gray-700 leading-tight sm:leading-relaxed">
-                    <div className="max-h-12 sm:max-h-16 overflow-y-auto">
-                        {summary.split('\n').map((line, index) => (
-                            <p key={index} className="mb-1">{line}</p>
-                        ))}
-                    </div>
-                </div>
-            )}
+            {/* Mobile Friendly Button - Harsh's Version */}
+            <button
+                onClick={(e) => {
+                    e.preventDefault(); 
+                    generateSummary();
+                }}
+                disabled={isSummarizing}
+                className="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs sm:text-sm rounded-lg shrink-0 min-h-[44px] touch-manipulation transition-all duration-200 hover:from-purple-700 hover:to-blue-700 active:scale-95"
+            >
+                {isSummarizing ? '...' : summary ? '✨ Regenerate' : '✨ Generate'}
+            </button>
         </div>
-
-        {/* Full Content Section */}
-        {content && (!summary || showFullContent) && (
-            <div className="text-gray-700 text-xs sm:text-sm flex-grow overflow-hidden min-h-0">
-                <div className="max-h-24 sm:max-h-32 overflow-y-auto browser-css">
-                    {content ? parse(String(content)) : "Loading..."}
+        
+        {summary && !showFullContent && (
+            <div className="text-[11px] sm:text-sm text-gray-700 leading-tight sm:leading-relaxed">
+                <div className="max-h-12 sm:max-h-16 overflow-y-auto">
+                    {summary.split('\n').map((line, index) => (
+                        <p key={index} className="mb-1">{line}</p>
+                    ))}
                 </div>
             </div>
         )}
     </div>
-  )
-}
+)}
+
+{/* Full Content Section */}
+{content && (!summary || showFullContent) && (
+    <div className="text-gray-700 text-xs sm:text-sm flex-grow overflow-hidden min-h-0">
+        <div className="max-h-24 sm:max-h-32 overflow-y-auto browser-css">
+            {content ? parse(String(content)) : "Loading..."}
+        </div>
+    </div>
+)}
 
 export default PostCard

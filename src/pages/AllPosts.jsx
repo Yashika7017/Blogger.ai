@@ -1,33 +1,26 @@
-import { Container, PostCard } from '../components'
-import React, {useState, useEffect} from 'react'
-import appwriteService from "../appwrite/config";
-import { useSelector } from 'react-redux';
-import { Query } from "appwrite";
+import React, { useState, useEffect } from 'react'
+import { Container, PostCard } from '../index'
+import appwriteService from "../appwrite/config"
+import { useSelector } from 'react-redux'
+import { Query } from 'appwrite'
 
 function AllPosts() {
     const [posts, setPosts] = useState([])
-    const userData = useSelector((state) => state.auth.userData);
+    const userData = useSelector((state) => state.auth.userData)
 
     useEffect(() => {
         if (userData) {
-            console.log('Current user data:', userData);
-            console.log('Current user ID:', userData.$id);
-            
             // Get only current user's posts
             appwriteService.getPosts([
                 Query.equal("userId", userData.$id)
             ]).then((posts) => {
                 if (posts) {
-                    console.log('Fetched posts:', posts.documents);
-                    console.log('Post user IDs:', posts.documents.map(p => ({ id: p.$id, userId: p.userId, title: p.Title })));
-                    
                     // Filter out test posts
                     const filteredPosts = posts.documents.filter(post => 
                         !post.Title.includes("Blogger.ai Test") && 
                         !post.Title.includes("Check AI responce") &&
                         !post.Title.includes("Check AI response")
                     );
-                    console.log('Filtered posts:', filteredPosts);
                     setPosts(filteredPosts)
                 }
             })
@@ -75,16 +68,17 @@ function AllPosts() {
                 </Container>
             </div>
             
-            {/* Mobile: Vertical Layout */}
+            {/* Mobile: Vertical Layout (Harsh's UI) */}
             <div className='flex flex-col space-y-4 sm:hidden'>
                 {posts.map((post) => (
-                    <PostCard 
-                        key={post.$id} 
-                        {...post} 
-                        content={post.Contant}
-                        authorName={post.authorName}
-                        userId={post.userId}
-                    />
+                    <div key={post.$id} className='w-full'>
+                        <PostCard 
+                            {...post} 
+                            content={post.Contant}
+                            authorName={post.authorName}
+                            userId={post.userId}
+                        />
+                    </div>
                 ))}
             </div>
             
