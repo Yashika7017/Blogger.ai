@@ -3,11 +3,26 @@ import appwriteService from "../appwrite/config"
 import { Link } from 'react-router-dom'
 import parse from 'html-react-parser'
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useSelector } from 'react-redux';
 
-function PostCard({ $id, Title, featuredImage, content }) { 
+function PostCard({ $id, Title, featuredImage, content, authorName, userId }) { 
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
+  
+  const userData = useSelector((state) => state.auth.userData);
+  const isCurrentUserAuthor = userData && userId ? userData.$id === userId : false;
+  
+  // Debug logging
+  console.log('PostCard Debug:', {
+    postId: $id,
+    postUserId: userId,
+    currentUserId: userData?.$id,
+    postAuthorName: authorName,
+    currentUserName: userData?.name,
+    isCurrentUserAuthor,
+    title: Title
+  });
 
   const generateFallbackSummary = (title, content) => {
         let textContent = content;
@@ -66,7 +81,7 @@ function PostCard({ $id, Title, featuredImage, content }) {
   };
 
   return (
-    <div className="w-full bg-gray-100 rounded-xl p-3 sm:p-4 border border-gray-700 transition-all duration-300 ease-in-out md:hover:scale-105 hover:shadow-2xl cursor-pointer post-card flex flex-col h-full overflow-hidden hover:bg-slate-800/80 hover:bg-gray-700/50 hover:shadow-blue-500/20">
+    <div className="w-full bg-gray-100 rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 lg:pr-8 border border-gray-700 transition-all duration-300 ease-in-out md:hover:scale-105 hover:shadow-2xl cursor-pointer post-card flex flex-col h-full overflow-hidden hover:bg-slate-800/80 hover:bg-gray-700/50 hover:shadow-blue-500/20">
         {/* 1. md:hover:scale-105 kiya taaki touch devices par layout na hile */}
         
         <Link to={`/post/${$id}`} className="block shrink-0">
@@ -81,41 +96,39 @@ function PostCard({ $id, Title, featuredImage, content }) {
                 />
             </div>
             {/* 2. Text size mobile ke liye text-lg aur laptop ke liye text-2xl kiya */}
-            <h2 className="text-lg sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-3 line-clamp-2 shrink-0">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 shrink-0">
                 {Title || 'Untitled'}
             </h2>
         </Link>
         
         {/* AI Summary Section */}
-        {content && (
-            <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
-                <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
-                    <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
-                    
-                    {/* 3. Button padding aur text mobile par thoda compact kiya */}
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault(); // Link click prevent karne ke liye
-                            generateSummary();
-                        }}
-                        disabled={isSummarizing}
-                        className="px-2 py-1 sm:px-3 sm:py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] sm:text-xs rounded-md shrink-0"
-                    >
-                        {isSummarizing ? '...' : summary ? '✨ Regenerate' : '✨ Generate'}
-                    </button>
-                </div>
+        <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
+            <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
+                <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
                 
-                {summary && !showFullContent && (
-                    <div className="text-[11px] sm:text-sm text-gray-700 leading-tight sm:leading-relaxed">
-                        <div className="max-h-12 sm:max-h-16 overflow-y-auto">
-                            {summary.split('\n').map((line, index) => (
-                                <p key={index} className="mb-1">{line}</p>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* Generate Summary Button - Always Visible */}
+                <button
+                    onClick={(e) => {
+                        e.preventDefault(); // Link click prevent karne ke liye
+                        generateSummary();
+                    }}
+                    disabled={isSummarizing}
+                    className="px-2 py-1 sm:px-3 sm:py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] sm:text-xs rounded-md shrink-0"
+                >
+                    {isSummarizing ? '...' : summary ? '✨ Regenerate' : '✨ Generate'}
+                </button>
             </div>
-        )}
+            
+            {summary && !showFullContent && (
+                <div className="text-[11px] sm:text-sm text-gray-700 leading-tight sm:leading-relaxed">
+                    <div className="max-h-12 sm:max-h-16 overflow-y-auto">
+                        {summary.split('\n').map((line, index) => (
+                            <p key={index} className="mb-1">{line}</p>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
 
         {/* Full Content Section */}
         {content && (!summary || showFullContent) && (

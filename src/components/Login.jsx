@@ -72,6 +72,14 @@ function Login() {
                     required: true,
                 })}
                 />
+                <div className="text-right">
+                    <Link
+                        to="/forgot-password"
+                        className="text-sm text-indigo-500 hover:text-indigo-400 transition-all duration-200 hover:underline"
+                    >
+                        Forgot your password?
+                    </Link>
+                </div>
                 <Button
                 type="submit"
                 className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-all duration-300  shadow-lg shadow-indigo-600/20 active:scale-95"

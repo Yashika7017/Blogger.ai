@@ -22,6 +22,7 @@ export default function Post() {
     const [post, setPost] = useState(null);
     const [aiInsights, setAiInsights] = useState(null);
     const [insightsLoading, setInsightsLoading] = useState(false);
+    const [authorData, setAuthorData] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
 
@@ -46,6 +47,20 @@ export default function Post() {
             document.head.removeChild(styleElement);
         };
     }, [slug, navigate]);
+
+    // Fetch author data when post is loaded and authorName is missing
+    useEffect(() => {
+        if (post && !post.authorName && post.userId) {
+            // Try to get author name from current user if they're the author
+            if (userData && userData.$id === post.userId && userData.name) {
+                setAuthorData({ name: userData.name });
+            } else {
+                // For other users, we'd need to implement a user lookup service
+                // For now, we'll use a fallback approach
+                setAuthorData({ name: 'Blog Author' });
+            }
+        }
+    }, [post, userData]);
 
     const deletePost = () => {
         appwriteService.deletePost(post.$id).then((status) => {
@@ -289,8 +304,8 @@ AI Tip: "[your improvement tip]"`;
                     </div>
                     
                     {/* Title Section */}
-                    <div className="w-full max-w-4xl mb-8">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 text-center">{post.Title}</h1>
+                    <div className="w-full max-w-4xl mb-8 px-4 sm:px-6">
+                        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white text-center break-words">{post.Title}</h1>
                     </div>
                     
                     {/* Content Section */}
@@ -369,11 +384,11 @@ AI Tip: "[your improvement tip]"`;
                         <div className="flex items-center justify-center sm:justify-start p-4 bg-slate-100 rounded-lg border border-slate-200">
                             <div className="flex items-center space-x-3">
                                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    {post?.authorName?.charAt(0).toUpperCase() || userData?.name?.charAt(0).toUpperCase() || 'A'}
+                                    {(post?.authorName || authorData?.name || 'Anonymous')?.charAt(0).toUpperCase() || 'A'}
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600 font-medium">
-                                        Published by {post?.authorName || userData?.name || 'Anonymous'} on 
+                                        Published by {post?.authorName || authorData?.name || 'Blog Author'} on 
                                         <span className="ml-1 text-gray-800">
                                             {post?.$createdAt ? new Date(post.$createdAt).toLocaleDateString('en-US', { 
                                                 month: 'long', 

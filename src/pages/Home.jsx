@@ -41,7 +41,10 @@ function Home() {
                            Tablet: 2 cards (sm:w-1/2)
                            Laptop: 3-4 cards (md/lg) */
                         <div key={post.$id} className='p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4'>
-                            <PostCard {...post} />
+                            <PostCard 
+                                {...post} 
+                                content={post.Contant}
+                            />
                         </div>
                     ))}
                 </div>
