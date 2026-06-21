@@ -103,7 +103,7 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
             </div>
         )}
     </div>
-  )
-}
+  );
+};
 
 export default PostCard;
