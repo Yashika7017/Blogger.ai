@@ -1,4 +1,5 @@
-import { Container, PostCard } from '../components'
+import Container from '../components/Container/container.jsx' 
+import PostCard from '../components/PostCard'
 import React, {useState, useEffect} from 'react'
 import appwriteService from "../appwrite/config";
 import { useSelector } from 'react-redux';
