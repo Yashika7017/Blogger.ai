@@ -82,8 +82,8 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
 
   return (
     <div className="w-full bg-gray-100 rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 lg:pr-8 border border-gray-700 transition-all duration-300 ease-in-out md:hover:scale-105 hover:shadow-2xl cursor-pointer post-card flex flex-col h-full overflow-hidden hover:bg-slate-800/80 hover:bg-gray-700/50 hover:shadow-blue-500/20">
-        {/* 1. md:hover:scale-105 kiya taaki touch devices par layout na hile */}
         
+        {/* Poore upper portion ko Link ke andar rakha */}
         <Link to={`/post/${$id}`} className="block shrink-0">
             <div className="w-full h-40 sm:h-52 mb-3 sm:mb-4 overflow-hidden rounded-xl bg-gray-200 shrink-0">
                 <img 
@@ -95,21 +95,20 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
                     }}
                 />
             </div>
-            {/* 2. Text size mobile ke liye text-lg aur laptop ke liye text-2xl kiya */}
             <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 shrink-0">
                 {Title || 'Untitled'}
             </h2>
         </Link>
         
-        {/* AI Summary Section */}
+        {/* AI Summary Section - Link se bahar taaki iske button par click ho sake */}
         <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
             <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
                 <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
                 
-                {/* Generate Summary Button - Always Visible */}
                 <button
                     onClick={(e) => {
-                        e.preventDefault(); // Link click prevent karne ke liye
+                        e.preventDefault(); 
+                        e.stopPropagation(); // Card click event bubbeling rokne ke liye
                         generateSummary();
                     }}
                     disabled={isSummarizing}
@@ -142,4 +141,4 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
   )
 }
 
-export default PostCard
+export default PostCard;

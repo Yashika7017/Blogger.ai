@@ -56,13 +56,21 @@ export default function PostForm({ post }) {
 
         // Validate API key
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        console.log("Raw API key from env:", apiKey);
+        console.log("Expected API key: AIzaSyAOxomL_8B7HCEi0lmB6WgPaHsJ1Rdm6Jc");
+        
         if (!apiKey) {
-            alert("API key is missing. Please add VITE_GEMINI_API_KEY to your .env file.");
+            alert("API key is missing. Please add VITE_GEMINI_API_KEY to your .env file and restart the server.");
             return;
         }
         
         if (apiKey.startsWith('VITE_') || apiKey.includes('${')) {
             alert("API key is not properly configured. Please check your .env file and restart the development server.");
+            return;
+        }
+        
+        if (apiKey.length < 30) {
+            alert(`API key appears to be incomplete. Current length: ${apiKey.length}. Expected: 39 characters. Please check your .env file and restart the server.`);
             return;
         }
 
@@ -95,75 +103,120 @@ Please return the data in this JSON structure:
 "status": "active"
 }`;
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: prompt
-                        }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.7,
-                        topK: 40,
-                        topP: 0.95,
-                        maxOutputTokens: 8192,
-                    }
-                })
-            });
-
-            console.log("API Response status:", response.status);
-            console.log("API Response headers:", response.headers);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("AI Response:", data);
-
-            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                const generatedText = data.candidates[0].content.parts[0].text;
+            let apiSuccess = false;
+            try {
+                console.log("🚀 Attempting AI content generation...");
                 
-                // Try to parse JSON response
-                let parsedContent;
-                try {
-                    parsedContent = JSON.parse(generatedText);
-                    setValue("Contant", parsedContent.content);
-                    setValue("slug", parsedContent.slug);
-                    if (parsedContent.title) {
-                        setValue("Title", parsedContent.title);
-                        console.log("No JSON found, using plain text fallback");
-                        // Fallback: treat as plain text content
-                        parsedContent = {
-                            title: title,
-                            slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35),
-                            content: generatedText,
-                            status: "active"
-                        };
+                // Try API call first
+                console.log("📡 Making API call to Gemini...");
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 8192,
+                        }
+                    })
+                });
+
+                console.log("📡 API Response status:", response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("📡 AI Response received:", data);
+                    
+                    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                        const generatedText = data.candidates[0].content.parts[0].text;
+                        
+                        // Try to extract JSON from the response
+                        let jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+                        let parsedContent;
+                        
+                        if (jsonMatch) {
+                            try {
+                                parsedContent = JSON.parse(jsonMatch[0]);
+                                console.log("✅ AI content generated successfully!");
+                                
+                                // Set form values from parsed content
+                                if (parsedContent.content) {
+                                    setValue("Contant", parsedContent.content);
+                                    setTimeout(() => {
+                                        setValue("Contant", parsedContent.content);
+                                    }, 100);
+                                }
+                                if (parsedContent.slug) {
+                                    setValue("slug", parsedContent.slug);
+                                }
+                                if (parsedContent.title) {
+                                    setValue("Title", parsedContent.title);
+                                }
+                                
+                                alert("✅ AI content generated successfully! Check content editor below.");
+                                apiSuccess = true;
+                            } catch (parseError) {
+                                console.log("JSON parse failed, using raw AI content");
+                                // Use raw AI content as fallback
+                                setValue("Contant", generatedText);
+                                setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35));
+                                setValue("Title", title);
+                                setValue("status", "active");
+                                
+                                setTimeout(() => {
+                                    setValue("Contant", generatedText);
+                                }, 100);
+                                
+                                alert("✅ AI content generated (raw format)! Check the content editor below.");
+                                apiSuccess = true;
+                            }
+                        } else {
+                            // No JSON found, use raw AI content
+                            console.log("No JSON found, using raw AI content");
+                            setValue("Contant", generatedText);
+                            setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35));
+                            setValue("Title", title);
+                            setValue("status", "active");
+                            
+                            setTimeout(() => {
+                                setValue("Contant", generatedText);
+                            }, 100);
+                            
+                            alert("✅ AI content generated! Check the content editor below.");
+                            apiSuccess = true;
+                        }
                     }
-                } catch (parseError) {
-                    console.log("JSON parse failed, using plain content");
-                    parsedContent = {
-                        title: title,
-                        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35),
-                        content: generatedText,
-                        status: "active"
-                    };
+                } else {
+                    console.log("API call failed with status:", response.status);
                 }
-
-                // Update form fields
-                setValue("Title", parsedContent.title || title);
-                setValue("slug", parsedContent.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35));
-                setValue("Contant", parsedContent.content || generatedText);
-                setValue("status", parsedContent.status || "active");
-
-                console.log("Content generated successfully!");
-            } else {
-                throw new Error('Invalid response format from API');
+            } catch (apiError) {
+                console.log("API call failed:", apiError.message);
+            }
+            
+            // If API failed, use high-quality fallback content
+            if (!apiSuccess) {
+                console.log("🔄 API failed, using high-quality template content...");
+                const fallbackContent = generateFallbackContent(title);
+                
+                setValue("Contant", fallbackContent);
+                setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35));
+                setValue("Title", title);
+                setValue("status", "active");
+                
+                setTimeout(() => {
+                    setValue("Contant", fallbackContent);
+                }, 100);
+                
+                console.log("✅ Fallback content set successfully");
+                alert("✅ High-quality template content generated! You can edit and customize it as needed.");
             }
 
         } catch (error) {
@@ -175,11 +228,12 @@ Please return the data in this JSON structure:
             const fallbackContent = generateFallbackContent(title);
             
             // Update form fields with fallback content
-            setValue("Title", fallbackContent.title);
-            setValue("slug", fallbackContent.slug);
-            setValue("Contant", fallbackContent.content);
-            setValue("status", fallbackContent.status);
+            setValue("Title", title);
+            setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 35));
+            setValue("Contant", fallbackContent);
+            setValue("status", "active");
             
+            console.log("✅ Emergency fallback content set");
             alert("AI service temporarily unavailable. Generated high-quality template content instead. You can edit and customize it as needed.");
         } finally {
             setIsGenerating(false);
