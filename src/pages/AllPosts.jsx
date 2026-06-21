@@ -1,4 +1,4 @@
-import Container from '../components/Container/container.jsx' 
+import Container from '../components/Container/container' 
 import PostCard from '../components/PostCard'
 import React, {useState, useEffect} from 'react'
 import appwriteService from "../appwrite/config";
