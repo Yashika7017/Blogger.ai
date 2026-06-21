@@ -3,96 +3,64 @@ import appwriteService from "../appwrite/config"
 import { Link } from 'react-router-dom'
 import parse from 'html-react-parser'
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useSelector } from 'react-redux';
 
 function PostCard({ $id, Title, featuredImage, content, authorName, userId }) { 
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
   
-  const userData = useSelector((state) => state.auth.userData);
-  const isCurrentUserAuthor = userData && userId ? userData.$id === userId : false;
-  
-  // Debug logging
-  console.log('PostCard Debug:', {
-    postId: $id,
-    postUserId: userId,
-    currentUserId: userData?.$id,
-    postAuthorName: authorName,
-    currentUserName: userData?.name,
-    isCurrentUserAuthor,
-    title: Title
-  });
-
   const generateFallbackSummary = (title, content) => {
-        let textContent = content;
-        if (content.includes('<')) {
-            textContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+        let textContent = content || '';
+        if (textContent.includes('<')) {
+            textContent = textContent.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
         }
-        
         const firstSentence = textContent.split('.')[0] + '.';
         const truncated = firstSentence.length > 150 ? firstSentence.substring(0, 150) + '...' : firstSentence;
-        
-        return `${title}: ${truncated}\nA comprehensive guide covering key concepts and practical applications.`;
-    };
+        return `${title}: ${truncated}`;
+  };
 
-    const generateSummary = async () => {
+  const generateSummary = async () => {
         if (!content || isSummarizing) return;
-        
         setIsSummarizing(true);
-        
         try {
-            console.log("Generating summary for:", Title);
-            
-            // HTML to Text clean up
             let textContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
             const limitedContent = textContent.substring(0, 1500);
-    
-            // --- Gemini Integration ---
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
             const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Stable model
-    
+            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
             const prompt = `Write a 2-sentence summary for this blog titled "${Title}": ${limitedContent}`;
-    
             const result = await model.generateContent(prompt);
             const response = await result.response;
-            const text = response.text();
-    
-            setSummary(text);
-            console.log("AI Summary Success:", text);
+            setSummary(response.text());
         } catch (error) {
             console.error('Error generating summary:', error);
-            const fallbackSummary = generateFallbackSummary(Title, content);
-            setSummary(fallbackSummary);
+            setSummary(generateFallbackSummary(Title, content));
         } finally {
             setIsSummarizing(false);
         }
-    };
+  };
+
+  const fallbackImg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjNGNEY2Ii8+Cjwvc3ZnPg==';
 
   const getImageUrl = () => {
-    if (!featuredImage) return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik03NSA2MEgxMjVWMTAwSDc1VjYwWiIgZmlsbD0iI0Q5RDlEOSIvPgo8cGF0aCBkPSJNODcuNSA3NUgxMTIuNVY4NUg4Ny41Vjc1WiIgZmlsbD0iI0YzRjRGNiIvPgo8L3N2Zz4K';
+    if (!featuredImage) return fallbackImg;
     try {
       return appwriteService.getFileView(featuredImage);
     } catch (error) {
-      console.error('Error getting image view:', error);
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik03NSA2MEgxMjVWMTAwSDc1VjYwWiIgZmlsbD0iI0Q5RDlEOSIvPgo8cGF0aCBkPSJNODcuNSA3NUgxMTIuNVY4NUg4Ny41Vjc1WiIgZmlsbD0iI0YzRjRGNiIvPgo8L3N2Zz4K';
+      return fallbackImg;
     }
   };
 
   return (
     <div className="w-full bg-gray-100 rounded-xl p-3 sm:p-4 pr-4 sm:pr-6 lg:pr-8 border border-gray-700 transition-all duration-300 ease-in-out md:hover:scale-105 hover:shadow-2xl cursor-pointer post-card flex flex-col h-full overflow-hidden hover:bg-slate-800/80 hover:bg-gray-700/50 hover:shadow-blue-500/20">
         
-        {/* Poore upper portion ko Link ke andar rakha */}
         <Link to={`/post/${$id}`} className="block shrink-0">
             <div className="w-full h-40 sm:h-52 mb-3 sm:mb-4 overflow-hidden rounded-xl bg-gray-200 shrink-0">
                 <img 
                     src={getImageUrl()} 
                     alt={Title || 'Post image'} 
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    onError={(e) => {
-                        e.target.src = 'data:image/svg+xml;base64,...'; 
-                    }}
+                    onError={(e) => { e.target.src = fallbackImg; }}
                 />
             </div>
             <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 shrink-0">
@@ -100,15 +68,13 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
             </h2>
         </Link>
         
-        {/* AI Summary Section - Link se bahar taaki iske button par click ho sake */}
         <div className="mb-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 shrink-0">
             <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mb-2 gap-2">
                 <h3 className="text-xs sm:text-sm font-semibold text-blue-700">🤖 AI Summary</h3>
-                
                 <button
                     onClick={(e) => {
                         e.preventDefault(); 
-                        e.stopPropagation(); // Card click event bubbeling rokne ke liye
+                        e.stopPropagation();
                         generateSummary();
                     }}
                     disabled={isSummarizing}
@@ -129,7 +95,6 @@ function PostCard({ $id, Title, featuredImage, content, authorName, userId }) {
             )}
         </div>
 
-        {/* Full Content Section */}
         {content && (!summary || showFullContent) && (
             <div className="text-gray-700 text-xs sm:text-sm flex-grow overflow-hidden min-h-0">
                 <div className="max-h-24 sm:max-h-32 overflow-y-auto browser-css">
