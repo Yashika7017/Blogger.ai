@@ -4,7 +4,7 @@
 Your API key length is only 27 characters, but it should be 39 characters.
 
 ## 🔍 Debug Information:
-- **Expected Key**: `AIzaSyAOxomL_8B7HCEi0lmB6WgPaHsJ1Rdm6Jc` (39 chars)
+- **Expected Key**: `YOUR_GEMINI_API_KEY_HERE`
 - **Current Length**: 27 characters
 - **Expected Length**: 39 characters
 
@@ -30,7 +30,7 @@ npm run dev
 
 ### 4. Verify the Fix:
 After restarting, check the console for:
-- ✅ "Raw API key from env: AIzaSyAOxomL_8B7HCEi0lmB6WgPaHsJ1Rdm6Jc"
+- ✅ "Raw API key from env: `YOUR_GEMINI_API_KEY_HERE`"
 - ✅ "API key length: 39"
 
 ## 🎯 Test Again:
@@ -41,7 +41,7 @@ After restarting, check the console for:
 
 ## 📋 Correct .env File Format:
 ```
-VITE_GEMINI_API_KEY=AIzaSyAOxomL_8B7HCEi0lmB6WgPaHsJ1Rdm6Jc
+VITE_GEMINI_API_KEY=`YOUR_GEMINI_API_KEY_HERE`
 ```
 
 ## 🔐 Security Reminder:
